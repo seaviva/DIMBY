@@ -12,9 +12,13 @@ This reduces file sizes from ~70MB to ~15MB per borough.
 """
 
 import json
+import math
 from pathlib import Path
 
 DATA_DIR = Path(__file__).parent.parent / "data"
+
+def is_nan(value):
+    return isinstance(value, float) and math.isnan(value)
 
 def optimize_borough(borough_name: str):
     """Optimize a single borough's data file."""
@@ -42,24 +46,24 @@ def optimize_borough(borough_name: str):
         }
 
         # Add optional fields only if present and valid
-        if "vpsf" in r and r["vpsf"] is not None and r["vpsf"] == r["vpsf"]:  # NaN check
+        if "vpsf" in r and r["vpsf"] is not None and not is_nan(r["vpsf"]):
             m["s"] = int(r["vpsf"])  # value per sqft (integer is fine)
-        if "sqft" in r:
+        if "sqft" in r and not is_nan(r["sqft"]):
             m["a"] = r["sqft"]  # area
-        if "addr" in r:
+        if "addr" in r and r["addr"] and not is_nan(r["addr"]):
             m["n"] = r["addr"]  # name/address
-        if "year" in r:
+        if "year" in r and not is_nan(r["year"]):
             m["y"] = r["year"]
-        if "units" in r:
+        if "units" in r and not is_nan(r["units"]):
             m["u"] = r["units"]
-        if "class" in r:
+        if "class" in r and r["class"] and not is_nan(r["class"]):
             m["c"] = r["class"]
 
         minimal.append(m)
 
     # Save with minimal whitespace
     with open(output_file, "w") as f:
-        json.dump(minimal, f, separators=(",", ":"))
+        json.dump(minimal, f, separators=(",", ":"), allow_nan=False)
 
     original_size = input_file.stat().st_size / (1024 * 1024)
     new_size = output_file.stat().st_size / (1024 * 1024)

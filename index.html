@@ -29,6 +29,7 @@
             <select id="metric-select">
                 <option value="value">Total Assessed Value</option>
                 <option value="vpsf">Value per Sq Ft</option>
+                <option value="twobr">Estimated 2BR Price</option>
             </select>
         </div>
 
@@ -60,6 +61,13 @@
 
     <!-- Tooltip -->
     <div id="tooltip" class="tooltip"></div>
+
+    <!-- Legend -->
+    <div id="legend" class="legend hidden">
+        <div class="legend-title">Median Assessed Value</div>
+        <div class="legend-gradient"></div>
+        <div class="legend-labels"></div>
+    </div>
 
     <!-- Attribution footer -->
     <div id="attribution">

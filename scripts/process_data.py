@@ -147,8 +147,8 @@ def process_borough_data(df: pd.DataFrame) -> list:
             "zone": row.get("zonedist1"),
             "vpsf": row.get("value_per_sqft"),
         }
-        # Remove None values to minimize JSON size
-        record = {k: v for k, v in record.items() if v is not None}
+        # Remove None and NaN values to keep JSON valid
+        record = {k: v for k, v in record.items() if v is not None and pd.notna(v)}
         records.append(record)
 
     return records
@@ -182,7 +182,7 @@ def main():
         # Save to JSON
         output_file = DATA_DIR / f"{borough_name}.json"
         with open(output_file, "w") as f:
-            json.dump(records, f, separators=(",", ":"))
+            json.dump(records, f, separators=(",", ":"), allow_nan=False)
 
         file_size_mb = output_file.stat().st_size / (1024 * 1024)
         print(f"  Saved {len(records):,} records to {output_file.name} ({file_size_mb:.1f} MB)")

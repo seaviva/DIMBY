@@ -62,7 +62,30 @@ const Tooltip = {
     formatContent(data) {
         const rows = [];
 
-        // Address as title
+        // Handle aggregated grid cell data
+        if (data.isAggregate) {
+            rows.push(`<div class="tooltip-title">Neighborhood Cell</div>`);
+
+            if (data.metric === 'vpsf') {
+                rows.push(this.formatRow('Median Value/Sq Ft', this.formatCurrency(data.value || 0)));
+            } else {
+                rows.push(this.formatRow('Median Value', this.formatLargeNumber(data.value || 0)));
+            }
+
+            if (data.count !== undefined) {
+                rows.push(this.formatRow('Properties', this.formatNumber(data.count)));
+            }
+
+            if (data.position) {
+                const lat = data.position[1].toFixed(4);
+                const lon = data.position[0].toFixed(4);
+                rows.push(`<div class="tooltip-coords">${lat}, ${lon}</div>`);
+            }
+
+            return rows.join('');
+        }
+
+        // Individual property data (fallback)
         const address = data.n || 'Property';
         rows.push(`<div class="tooltip-title">${this.escapeHtml(address)}</div>`);
 
@@ -74,6 +97,12 @@ const Tooltip = {
         // Value per sqft
         if (data.s) {
             rows.push(this.formatRow('Value/Sq Ft', this.formatCurrency(data.s)));
+        }
+
+        // Estimated 2BR price (proxy)
+        if (data.s) {
+            const estimatedTwoBr = data.s * 900;
+            rows.push(this.formatRow('Estimated 2BR', this.formatLargeNumber(estimatedTwoBr)));
         }
 
         // Building area
@@ -132,6 +161,27 @@ const Tooltip = {
             currency: 'USD',
             maximumFractionDigits: 0
         }).format(amount);
+    },
+
+    /**
+     * Format large numbers with K/M/B suffixes.
+     * @param {number} num - Number to format
+     * @returns {string} Formatted number
+     */
+    formatLargeNumber(num) {
+        if (num >= 1e12) {
+            return `$${(num / 1e12).toFixed(1)}T`;
+        }
+        if (num >= 1e9) {
+            return `$${(num / 1e9).toFixed(1)}B`;
+        }
+        if (num >= 1e6) {
+            return `$${(num / 1e6).toFixed(1)}M`;
+        }
+        if (num >= 1e3) {
+            return `$${(num / 1e3).toFixed(0)}K`;
+        }
+        return `$${Math.round(num)}`;
     },
 
     /**
