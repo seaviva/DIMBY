@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dimby - NYC Real Estate Heat Map</title>
+
+    <!-- MapLibre GL JS -->
+    <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
+    <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+
+    <!-- Deck.gl -->
+    <script src="https://unpkg.com/deck.gl@9.0.16/dist.min.js"></script>
+
+    <!-- Custom styles -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Map container -->
+    <div id="map"></div>
+
+    <!-- Controls panel -->
+    <div id="controls">
+        <h1>Dimby</h1>
+        <p class="subtitle">NYC Real Estate Heat Map</p>
+
+        <div class="control-group">
+            <label for="metric-select">Heat Map Metric</label>
+            <select id="metric-select">
+                <option value="value">Total Assessed Value</option>
+                <option value="vpsf">Value per Sq Ft</option>
+            </select>
+        </div>
+
+        <div class="control-group">
+            <label for="borough-select">Borough</label>
+            <select id="borough-select">
+                <option value="all">All Boroughs</option>
+                <option value="manhattan">Manhattan</option>
+                <option value="brooklyn">Brooklyn</option>
+                <option value="queens">Queens</option>
+            </select>
+        </div>
+
+        <div class="control-group">
+            <label for="radius-slider">Heat Radius</label>
+            <input type="range" id="radius-slider" min="5" max="50" value="20">
+            <span id="radius-value">20px</span>
+        </div>
+
+        <div class="control-group">
+            <label for="intensity-slider">Intensity</label>
+            <input type="range" id="intensity-slider" min="1" max="10" value="5">
+            <span id="intensity-value">5</span>
+        </div>
+
+        <div id="loading" class="loading">Loading data...</div>
+        <div id="stats" class="stats"></div>
+    </div>
+
+    <!-- Tooltip -->
+    <div id="tooltip" class="tooltip"></div>
+
+    <!-- Attribution footer -->
+    <div id="attribution">
+        Property data from NYC Dept of City Planning (PLUTO)
+    </div>
+
+    <!-- Application scripts -->
+    <script src="js/map.js"></script>
+    <script src="js/controls.js"></script>
+    <script src="js/tooltip.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
